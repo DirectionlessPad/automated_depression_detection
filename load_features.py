@@ -1,8 +1,5 @@
 import pandas as pd
-from pathlib import Path
 from typing import Generator
-
-FEATURES_PATH = Path("openface_features").rglob("*.csv")
 
 
 def load_openface_features(features_path: Generator) -> pd.DataFrame:

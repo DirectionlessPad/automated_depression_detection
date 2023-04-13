@@ -57,7 +57,6 @@ def load_openface_hog(features_path: Path) -> Dict[str, pd.DataFrame]:
         sample = str_path[start + 1 : end]
         # Read the csv file and store as dataframe.
         sample_df = pd.read_csv(path, header=None)
-        breakpoint()
         samples[sample] = sample_df
     if not samples:
         print(

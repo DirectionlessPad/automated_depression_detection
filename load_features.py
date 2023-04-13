@@ -4,8 +4,8 @@ from typing import Dict
 import pandas as pd
 
 
-# These two function can almost certainly be made into one by either importing both together into a single object
-# or by creating a single (more generic) function that can handle both.
+# These two function can almost certainly be made into one by either importing both together
+# into a single objector by creating a single (more generic) function that can handle both.
 
 
 def load_openface_features(features_path: Path) -> Dict[str, pd.DataFrame]:
@@ -30,6 +30,10 @@ def load_openface_features(features_path: Path) -> Dict[str, pd.DataFrame]:
         sample_df = pd.read_csv(path)
         sample_df.columns = sample_df.columns.str.replace(" ", "")
         samples[sample] = sample_df
+    if not samples:
+        print(
+            "No samples loaded, check the samples are available in the input directory."
+        )
     return samples
 
 
@@ -55,4 +59,8 @@ def load_openface_hog(features_path: Path) -> Dict[str, pd.DataFrame]:
         sample_df = pd.read_csv(path, header=None)
         breakpoint()
         samples[sample] = sample_df
+    if not samples:
+        print(
+            "No samples loaded, check the samples are available in the input directory."
+        )
     return samples

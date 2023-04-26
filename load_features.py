@@ -1,4 +1,4 @@
-"""Functions for loading OpenFace generated features."""
+"""Functions for loading input features."""
 from pathlib import Path
 from typing import Dict
 import pandas as pd
@@ -59,20 +59,20 @@ def load_daic_openface_features(
         "train": train_path_generator,
         "test": test_path_generator,
     }
-    for key, subset_dict in loaded_features.items():
-        gen = generators[key]
+    for dataset_split, subset_dict in loaded_features.items():
+        gen = generators[dataset_split]
         for path in gen:
             str_path = str(path)
             start = str_path.rindex("\\")
             end = str_path.rindex("_")
-            sample = str_path[start + 1 : end]
+            participant_id = str_path[start + 1 : end]
             full_path = path / (
-                "features/" + sample + "_OpenFace2.1.0_Pose_gaze_AUs.csv"
+                "features/" + participant_id + "_OpenFace2.1.0_Pose_gaze_AUs.csv"
             )
-            sample_df = pd.read_csv(full_path)
-            sample_df.columns = sample_df.columns.str.replace(" ", "")
-            subset_dict[sample] = sample_df
-            # loaded_features[key][sample] = feature
+            participant_id_df = pd.read_csv(full_path)
+            participant_id_df.columns = participant_id_df.columns.str.replace(" ", "")
+            subset_dict[participant_id] = participant_id_df
+            # loaded_features[dataset_split][participant_id] = feature
         if not subset_dict:
             print(
                 "No samples loaded, check the samples are available in the input directory."
@@ -99,10 +99,10 @@ def load_openface_hog(
         # The following may or may not work depending on the naming conventions of the samples.
         start = str_path.rindex("\\")
         end = str_path.rindex("H")
-        sample = str_path[start + 1 : end]
+        participant_id = str_path[start + 1 : end]
         # Read the csv file and store as dataframe.
-        sample_df = pd.read_csv(path, header=None)
-        samples[sample] = sample_df
+        samples_df = pd.read_csv(path, header=None)
+        samples[participant_id] = samples_df
     if not samples:
         print(
             "No samples loaded, check the samples are available in the input directory."
@@ -116,7 +116,7 @@ def load_daic_resnet50_features(
     """TODO"""
     if not Path.exists(features_path):
         print("Directory does not exist. Check input feature directory.")
-    loaded_features = {"dev": {}, "train": {}, "test": {}}
+    loaded_features = {"dev": {}, "train": {}, "test": {}}  # type: Dict[str, Dict]
     dev_path_generator = (features_path / "dev").glob("*")
     train_path_generator = (features_path / "train").glob("*")
     test_path_generator = (features_path / "test").glob("*")
@@ -125,18 +125,18 @@ def load_daic_resnet50_features(
         "train": train_path_generator,
         "test": test_path_generator,
     }
-    for key, subset_dict in loaded_features.items():
-        gen = generators[key]
+    for dataset_split, subset_dict in loaded_features.items():
+        gen = generators[dataset_split]
         for path in gen:
             str_path = str(path)
             start = str_path.rindex("\\")
             end = str_path.rindex("_")
-            sample = str_path[start + 1 : end]
-            full_path = path / ("features/" + sample + "_CNN_ResNet.mat")
+            participant_id = str_path[start + 1 : end]
+            full_path = path / ("features/" + participant_id + "_CNN_ResNet.mat")
             matlab_file = scipy.io.loadmat(full_path)
             feature = matlab_file["feature"]
-            subset_dict[sample] = feature
-            # loaded_features[key][sample] = feature
+            subset_dict[participant_id] = feature
+            # loaded_features[dataset_split][participant_id] = feature
         if not subset_dict:
             print(
                 "No samples loaded, check the samples are available in the input directory."

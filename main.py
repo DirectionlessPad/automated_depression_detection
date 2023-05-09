@@ -7,19 +7,29 @@ from tensorflow.keras import (
     models,
 )
 import matplotlib.pyplot as plt
-from load_features import load_daic_openface_features, load_openface_hog
+from load_features import (
+    load_daic_openface_features,
+    load_openface_hog,
+    load_daic_resnet50_features,
+)
 from load_labels import load_daic_labels
-from preprocess import hog_windowing
+from preprocess import hog_windowing, daic_resnet50_windowing
 
 
 FEATURES_PATH = Path("openface_features")
 DAIC_LABELS = Path("daic_labels")
+DAIC_RESNET50_FEATURES = Path("resnet_features")
 HOG_FEATURES_PATH = Path("openface_features\\hog_features")
 
 # samples = load_daic_openface_features(FEATURES_PATH)
 # sample_hog = load_openface_hog(HOG_FEATURES_PATH)
 
-labels = load_daic_labels(DAIC_LABELS)
+
+samples = load_daic_resnet50_features(DAIC_RESNET50_FEATURES)
+breakpoint()
+# labels = load_daic_labels(DAIC_LABELS)
+# windowed_resnet50_samples = daic_resnet50_windowing(samples, labels)
+
 
 # windowed_hog_samples = hog_windowing(sample_hog)
 # call a function to preprocess the features (need to write the function, possibly in a

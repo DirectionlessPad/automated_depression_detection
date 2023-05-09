@@ -1,5 +1,5 @@
 """Functions for performing any required preprocessing of data samples."""
-from typing import Dict, List
+from typing import Dict, List, Any
 import pandas as pd
 import numpy as np
 import numpy.typing as npt
@@ -21,18 +21,39 @@ def hog_windowing(df_samples: Dict[str, pd.DataFrame]) -> np.ndarray:
 
 
 def daic_resnet50_windowing(
-    samples_dict: Dict[str, Dict[str, npt.NDArray]]
-) -> Dict[str, Dict[str, List[npt.NDArray]]]:
+    samples_dict: Dict[str, Dict[str, npt.NDArray]],
+    labels_dict: Dict[str, Dict[str, Dict[str, int]]],
+) -> Dict[str, Dict[str, List[Any]]]:
     """Takes the loaded raw .mat file data and windows it into 15 frame
     sections to be used as the input for the model.
     """
-    windowed_samples = {"dev": [], "train": [], "test": []}  # type: Dict[str, List]
-    windowed_samples_labels = {
+    windowed_samples = {
         "dev": [],
         "train": [],
         "test": [],
-    }  # type: Dict[str, List]
+    }  # type: Dict[str, List[npt.NDArray]]
+    windowed_samples_phqbinary_labels = {
+        "dev": [],
+        "train": [],
+        "test": [],
+    }  # type: Dict[str, List[int]]
+    windowed_samples_phqscore_labels = {
+        "dev": [],
+        "train": [],
+        "test": [],
+    }  # type: Dict[str, List[int]]
     for dataset_split, samples in samples_dict.items():
         for participant_id, np_values in samples.items():
             for i in range(WINDOW_SIZE, np_values.shape[0], WINDOW_SIZE):
                 windowed_samples[dataset_split].append(np_values[(i - WINDOW_SIZE) : i])
+                windowed_samples_phqbinary_labels[dataset_split].append(
+                    labels_dict[dataset_split][participant_id]["PHQ_Binary"]
+                )
+                windowed_samples_phqscore_labels[dataset_split].append(
+                    labels_dict[dataset_split][participant_id]["PHQ_Score"]
+                )
+    return {
+        "windowed samples": windowed_samples,
+        "PHQ binary": windowed_samples_phqbinary_labels,
+        "PHQ Score": windowed_samples_phqscore_labels,
+    }

@@ -4,7 +4,7 @@ from typing import Dict
 import pandas as pd
 
 
-def load_daic_labels(label_path: Path) -> Dict[str, Dict[str, int]]:
+def load_daic_labels(label_path: Path) -> Dict[str, Dict[str, Dict[str, int]]]:
     """TODO"""
     if not Path.exists(label_path):
         print("Directory does not exist. Check input feature directory.")
@@ -21,6 +21,6 @@ def load_daic_labels(label_path: Path) -> Dict[str, Dict[str, int]]:
             participant = str(split_dict["Participant_ID"][i])
             loaded_labels[dataset_split][participant] = {
                 "PHQ_Binary": split_dict["PHQ_Binary"][i],
-                "PHQ_Score": split_dict["PHQ_Binary"][i],
+                "PHQ_Score": split_dict["PHQ_Score"][i],
             }
     return loaded_labels
